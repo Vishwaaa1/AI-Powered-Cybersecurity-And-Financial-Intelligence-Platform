@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bill Splitter</title>
+  <script>
+    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+</script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-6">
+
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6 text-center">Smart Bill Splitter</h1>
+
+    <!-- Participants -->
+    <div class="mb-6">
+      <label class="block text-lg font-semibold mb-2">Participants:</label>
+      <div id="participants" class="flex flex-wrap gap-2 mb-2">
+        <input type="text" placeholder="Enter name..." id="participantName" class="p-2 rounded text-black" />
+        <button onclick="addParticipant()" class="bg-blue-600 px-4 py-2 rounded">Add</button>
+      </div>
+      <ul id="participantList" class="list-disc pl-5"></ul>
+    </div>
+
+    <!-- Expense Inputs -->
+    <div class="mb-6 border-t pt-4">
+      <h2 class="text-xl font-semibold mb-2">Add Expense</h2>
+      <input type="text" id="payer" placeholder="Who paid?" class="p-2 rounded text-black mb-2 block w-full"/>
+      <input type="number" id="amount" placeholder="Amount" class="p-2 rounded text-black mb-2 block w-full"/>
+      <label class="block mb-2">Select Participants involved:</label>
+      <div id="splitParticipants" class="flex flex-wrap gap-2 mb-2"></div>
+      <button onclick="addExpense()" class="bg-green-600 px-4 py-2 rounded">Add Expense</button>
+      <ul id="expenseList" class="list-disc pl-5 mt-3"></ul>
+    </div>
+
+    <!-- Submit to Backend -->
+    <div class="text-center mt-8">
+      <button onclick="submitExpenses()" class="bg-purple-700 px-6 py-3 rounded text-lg">Calculate Settlements</button>
+    </div>
+
+    <!-- Results -->
+    <div id="result" class="mt-8 text-lg space-y-2"></div>
+  </div>
+
+  <script src="scripts/bill_splitter.js"></script>
+</body>
+</html>

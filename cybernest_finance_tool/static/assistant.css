@@ -1,0 +1,124 @@
+/* static/assistant.css */
+
+/* --- General Page Style --- */
+body {
+    background-color: #F3F4F6;
+}
+
+/* --- Chat Bubble Styling --- */
+.chat-message {
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 1rem;
+    max-width: 80%;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.user-message {
+    align-self: flex-end;
+    background-color: #4F46E5; /* New Primary Blue */
+    color: white;
+    border-bottom-right-radius: 0.25rem; /* Stylish corner */
+}
+
+.bot-message {
+    align-self: flex-start;
+    background-color: #FFFFFF; /* White */
+    color: #111827; /* Dark charcoal text */
+    border: 1px solid #E5E7EB;
+    border-bottom-left-radius: 0.25rem; /* Stylish corner */
+    display: flex; /* For avatar */
+    align-items: center;
+    gap: 0.75rem;
+}
+
+#chat-box {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+}
+
+/* --- Category Button Enhancements --- */
+.category-btn {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out; /* Smooth transition */
+    border: 1px solid transparent;
+}
+
+.category-btn:hover {
+    transform: translateY(-2px); /* Subtle lift effect */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+}
+
+.category-btn.active {
+    font-weight: 600;
+    background-color: #4F46E5 !important;
+    color: white !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* --- Suggestion Button Hover Effect --- */
+.suggest-btn {
+    display: block;
+    background-color: #e0e7ff;
+    color: #1e3a8a;
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    width: 100%;
+    text-align: left;
+    transition: background-color 0.2s;
+}
+
+.suggest-btn:hover {
+    background-color: #c7d2fe;
+}
+
+
+/* --- AI AVATAR & TYPING INDICATOR (NEW) --- */
+.ai-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #4F46E5;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+}
+.typing-indicator span {
+    height: 8px;
+    width: 8px;
+    margin: 0 2px;
+    background-color: #a0aec0;
+    border-radius: 50%;
+    display: inline-block;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+.typing-indicator span:nth-of-type(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-of-type(3) { animation-delay: 0.4s; }
+
+@keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1.0); }
+}
+
+/* --- SEND BUTTON LOADER (NEW) --- */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.loader {
+    animation: spin 1s linear infinite;
+}

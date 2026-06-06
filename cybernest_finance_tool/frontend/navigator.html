@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>CyberNest</title>
+    {/* Ensure correct path */}
+    <link rel="stylesheet" href="/static/navigator_assets/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+</head>
+<body>
+    {/* Main page particles */}
+    <div id="tsparticles"></div>
+
+    {/* Loading Screen */}
+    <div id="loader">
+        <div class="loader-content">
+            <div class="loader-text-container">
+                <span class="loader-text-background">CyberNest</span>
+                <span class="loader-text-fill" id="loader-fill">CyberNest</span>
+            </div>
+            <p class="loader-percentage" id="loader-percentage">loading... 0%</p>
+        </div>
+    </div>
+
+    {/* Main Content */}
+    <header class="navbar">
+        <div class="logo">
+            <i class="bi bi-rocket-takeoff"></i>
+            <span>CyberNest</span>
+        </div>
+        <nav class="nav-links">
+            <a href="#" class="active">Home</a>
+            <a href="#">About Us</a>
+            <a href="#">Contact</a>
+            <a href="#">Team</a>
+        </nav>
+    </header>
+
+    <div class="container" id="main-content">
+        <h1 class="title animated-title">CyberNest</h1>
+        <p class="subtitle">NAVIGATOR</p>
+        <div class="tools-grid">
+            <a href="/url-detector" class="tool-card"> <i class="bi bi-wrench"></i> <span>URL Threat Detector</span> </a>
+            <a href="/dashboard" class="tool-card"> <i class="bi bi-robot"></i> <span>Bank Statement Analyzer</span> </a>
+            <a href="/file-detector" class="tool-card"> <i class="bi bi-terminal"></i> <span>File Detector</span> </a>
+            <a href="/tool-unavailable" class="tool-card"> <i class="bi bi-shield"></i> <span>Tool Four</span> </a>
+        </div>
+    </div>
+
+    {/* Ensure correct path */}
+    <script src="/static/navigator_assets/loader.js"></script>
+
+    {/* tsParticles Library */}
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
+    {/* Script for MAIN page particles */}
+    <script>
+      tsParticles.load("tsparticles", {
+        fullScreen: { enable: false }, // Attached to #tsparticles div
+        background: { color: { value: "#05080f" } },
+        particles: {
+             number: { value: 100, density: { enable: true, area: 800 } },
+             color: { value: "#00f0ff" }, shape: { type: "circle" },
+             opacity: { value: 0.4 }, size: { value: { min: 2, max: 4 } },
+             move: { enable: true, speed: 2, direction: "none", outModes: { default: "bounce" }, random: true, straight: false },
+             links: { enable: true, distance: 120, color: "#00f0ff", opacity: 0.3, width: 1 }
+        },
+        interactivity: {
+             detectsOn: "window",
+             events: { onHover: { enable: true, mode: "grab" }, onClick: { enable: true, mode: ["push", "repulse"] } },
+             modes: { grab: { distance: 140, links: { opacity: 0.5 } }, push: { quantity: 10 }, repulse: { distance: 200, duration: 0.8 } }
+        },
+        detectRetina: true
+      }).then(container => {
+         window.addEventListener("click", e => {
+             const pos = { x: (e.clientX / window.innerWidth) * 100, y: (e.clientY / window.innerHeight) * 100 };
+             if (container && container.particles) { // Check if container exists
+                container.particles.push(10, pos);
+                if (container.interactivity && container.interactivity.mouse) {
+                    container.interactivity.mouse.clickPosition = { x: e.clientX, y: e.clientY };
+                    container.interactivity.status = "clicking";
+                    container.interactivity.mouse.clicking = true;
+                    setTimeout(() => { if (container.interactivity && container.interactivity.mouse) container.interactivity.mouse.clicking = false; }, 0);
+                }
+             }
+         });
+      });
+    </script>
+</body>
+</html>

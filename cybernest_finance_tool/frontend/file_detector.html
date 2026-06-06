@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CyberNest - File Type Detector</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* CyberNest Theme Variables - Adjusted for consistency */
+        :root{
+            --bg:#05080f; /* Darker background like navigator */
+            --panel:#121931;
+            --accent:#00f0ff; /* CyberNest blue */
+            --accent-2:#b84eff; /* CyberNest purple for highlights/links */
+            --text:#e9ecf1;
+            --muted:#aab3c7;
+            --danger:#ff788a;
+            --ok:#6ef0a6;
+            --mono:"SFMono-Regular",Consolas,Monaco,Menlo,monospace;
+            --sans: 'Orbitron', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, "Apple Color Emoji","Segoe UI Emoji";
+        }
+        *{box-sizing:border-box}
+        html,body{height:100%}
+        body{
+            margin:0;
+            background:var(--bg); /* Use CyberNest background */
+            color:var(--text);
+            font-family:var(--sans);
+            overflow: hidden; /* Prevent scrollbars from particles */
+            position: relative; /* For stacking with particles */
+        }
+
+        /* tsparticles container */
+        #tsparticles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Behind other content */
+            top: 0;
+            left: 0;
+        }
+
+        /* Overlay for content to make it readable */
+        .content-overlay {
+            position: relative; /* Above particles */
+            z-index: 1;
+            height: 100%; /* Take full height */
+            overflow-y: auto; /* Allow content to scroll */
+            padding-top: 20px; /* Padding for the top navigation */
+        }
+
+        .wrap{
+            max-width:1000px;
+            margin:20px auto 48px auto; /* Adjusted top margin for navigation */
+            padding:0 20px
+        }
+        h1{
+            font-size:28px;
+            margin:0 0 16px;
+            color:var(--accent); /* CyberNest blue title */
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.6); /* Neon glow */
+        }
+        p.lead{color:var(--muted);margin-top:0}
+
+        /* Navigation at the top */
+        .nav-back {
+            padding: 15px 30px;
+            background: rgba(11, 16, 32, 0.8); /* Slightly transparent dark background */
+            border-bottom: 1px solid rgba(0, 240, 255, 0.1); /* CyberNest border */
+            position: sticky;
+            top: 0;
+            z-index: 10; /* Above other content, below main overlay */
+        }
+        .nav-back a {
+            color: var(--accent); /* CyberNest blue for link */
+            text-decoration: none;
+            font-weight: bold;
+            font-family: var(--sans);
+        }
+        .nav-back a:hover {
+            text-decoration: underline;
+            color: var(--accent-2); /* Hover color */
+        }
+
+        /* Uploader styles - keep mostly as is, adjust colors */
+        .uploader{
+            border:1px dashed #3951a6; /* A bit brighter dash border */
+            border-radius:16px;
+            background:linear-gradient(180deg,#101736,#0e1530);
+            padding:28px;display:grid;gap:14px;align-items:center;justify-items:center; text-align:center
+        }
+        .uploader.drag{outline:2px solid var(--accent)}
+        .uploader input[type=file]{display:none}
+        .btn{
+            appearance:none;border:0;
+            background:var(--accent); /* CyberNest blue button */
+            color:#0b1020;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;
+            text-shadow: 0 0 5px rgba(0, 240, 255, 0.6);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+        .btn:disabled{opacity:.6;cursor:not-allowed}
+
+        /* Card styles - adjust colors for CyberNest feel */
+        .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;margin-top:22px}
+        @media (max-width:900px){.grid{grid-template-columns:1fr}}
+
+        .card{
+            background:var(--panel);
+            border:1px solid #1c2752; /* Darker border */
+            border-radius:16px;
+            box-shadow:0 10px 30px rgba(0,0,0,.25)
+        }
+        .card h2{
+            font-size:16px;margin:0;padding:14px 16px;
+            border-bottom:1px solid #1b2449; /* Darker border */
+            color:var(--accent); /* CyberNest blue heading */
+            text-shadow: 0 0 5px rgba(0, 240, 255, 0.3);
+        }
+        .card .content{padding:14px 16px}
+
+        .kv{display:grid;grid-template-columns:160px 1fr;gap:8px 12px;font-size:14px}
+        .kv .muted{color:var(--muted)}
+
+        .result{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:800;color:var(--accent-2)}
+        .badge{padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.25px;border:1px solid #243067}
+        .badge.ok{background:#0d2b1e;border-color:#1c824f;color:var(--ok)}
+        .badge.warn{background:#3a1118;border-color:#7b2733;color:var(--danger)}
+
+        .hex{font-family:var(--mono);font-size:13px;line-height:1.4;white-space:pre;overflow:auto;max-height:420px;background:#0b1020;border-radius:12px;border:1px solid #222b55;padding:10px}
+        .hex .addr{color:var(--accent-2)} /* Using CyberNest purple for addresses */
+        .hex .byte{color:#d1d8ff}
+        .hex .hit{background:linear-gradient(180deg,rgba(124,156,255,.22),rgba(124,156,255,.05));border-radius:4px;padding:0 2px}
+
+        .footer{margin:22px 0;color:var(--muted);font-size:12px}
+        a{color:var(--accent);text-decoration:none} /* Standard link color */
+        a:hover{text-decoration: underline;}
+
+        /* Responsive */
+        @media (max-width:900px){.grid{grid-template-columns:1fr}}
+        @media (max-width:500px){.title{font-size:2.5rem;}}
+    </style>
+</head>
+<body>
+    <div id="tsparticles"></div>
+
+    <div class="content-overlay">
+        <div class="nav-back">
+            <a href="/">&#8592; Back to Navigator Home</a>
+        </div>
+
+        <div class="wrap">
+            <h1>File Type Detector (Magic Numbers)</h1>
+            <p class="lead">Upload any file. We'll inspect its header (magic numbers) and tell you the <b>real file type</b>, even if the extension pretends to be something else.</p>
+
+            <div id="drop" class="uploader" tabindex="0" role="button" aria-label="Upload file by clicking or dragging">
+                <div>
+                    <div style="font-weight:800;font-size:18px;margin-bottom:6px">Drop a file here</div>
+                    <div class="badge" aria-hidden="true">or</div>
+                </div>
+                <label class="btn" for="file">Choose a file</label>
+                <input id="file" type="file" />
+                <div class="footer">We only read the first few hundred bytes in your browser. Nothing leaves your device.</div>
+            </div>
+
+            <div class="grid" aria-live="polite" aria-atomic="true">
+                <section class="card" id="summaryCard" hidden>
+                    <h2>Summary</h2>
+                    <div class="content">
+                        <div class="result" id="resultLine">
+                            <span class="badge">—</span>
+                            <span id="detectedType">Awaiting file…</span>
+                        </div>
+                        <div style="height:10px"></div>
+                        <div class="kv">
+                            <div class="muted">File name</div><div id="fileName">—</div>
+                            <div class="muted">Reported extension</div><div id="fileExt">—</div>
+                            <div class="muted">Size</div><div id="fileSize">—</div>
+                            <div class="muted">Magic at offset</div><div id="magicOffset">—</div>
+                            <div class="muted">Matched signature</div><div id="matchedSig">—</div>
+                            <div class="muted">Confidence</div><div id="confidence">—</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card" id="hexCard" hidden>
+                    <h2>Header (Hex Dump)</h2>
+                    <div class="content">
+                        <div id="hex" class="hex" aria-label="Hex dump of the file header"></div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="footer">Tip: Try renaming a <code>.pdf</code> to <code>.gdp</code> and drop it — the tool should still call it out as a PDF.</div>
+        </div>
+    </div> <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
+    <script>
+        tsParticles.load("tsparticles", {
+            // fullScreen: { enable: true }, // Keep this if you want it to be full screen background always
+            fullScreen: { enable: false, zIndex: 0 }, // If false, the div size determines the canvas size.
+            background: {
+                color: { value: "#05080f" }
+            },
+            particles: {
+                number: {
+                    value: 100,
+                    density: {
+                        enable: true,
+                        area: 800
+                    }
+                },
+                color: { value: "#00f0ff" },
+                shape: { type: "circle" },
+                opacity: { value: 0.4 },
+                size: {
+                    value: { min: 2, max: 4 }
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: "none",
+                    outModes: { default: "bounce" },
+                    random: true,
+                    straight: false
+                },
+                links: {
+                    enable: true,
+                    distance: 120,
+                    color: "#00f0ff",
+                    opacity: 0.3,
+                    width: 1
+                }
+            },
+            interactivity: {
+                detectsOn: "window",
+                events: {
+                    onHover: {
+                        enable: true,
+                        mode: "grab"
+                    },
+                    onClick: {
+                        enable: true,
+                        mode: ["push", "repulse"]
+                    }
+                },
+                modes: {
+                    grab: {
+                        distance: 140,
+                        links: { opacity: 0.5 }
+                    },
+                    push: {
+                        quantity: 10,
+                    },
+                    repulse: {
+                        distance: 200,
+                        duration: 0.8
+                    }
+                }
+            },
+            detectRetina: true
+        }).then(container => {
+            // Custom override: spawn particles at cursor
+            // This assumes the container for particles is the full screen or main window.
+            // If #tsparticles div has a smaller size, you might need to adjust positions
+            window.addEventListener("click", e => {
+                const pos = {
+                    x: (e.clientX / window.innerWidth) * 100,
+                    y: (e.clientY / window.innerHeight) * 100
+                };
+                container.particles.push(10, pos);
+                container.interactivity.mouse.clickPosition = { x: e.clientX, y: e.clientY };
+                container.interactivity.status = "clicking";
+                container.interactivity.mouse.clicking = true;
+                setTimeout(() => {
+                    container.interactivity.mouse.clicking = false;
+                }, 0);
+            });
+        });
+    </script>
+
+    <script>
+        // --- Signature table (offset-sensitive when applicable) ---
+        const SIGNATURES = [
+            { name: 'PDF document', ext: '.pdf', magic: [0x25,0x50,0x44,0x46,0x2D] }, // %PDF-
+            { name: 'ZIP archive', ext: '.zip', test: b => startsWith(b,[0x50,0x4B,0x03,0x04]) || startsWith(b,[0x50,0x4B,0x05,0x06]) || startsWith(b,[0x50,0x4B,0x07,0x08]) },
+            { name: 'PNG image', ext: '.png', magic: [0x89,0x50,0x4E,0x47,0x0D,0x0A,0x1A,0x0A] },
+            { name: 'JPEG image', ext: '.jpg', test: b => startsWith(b,[0xFF,0xD8,0xFF]) },
+            { name: 'GIF image', ext: '.gif', magic: strBytes('GIF8') },
+            { name: 'BMP image', ext: '.bmp', magic: [0x42,0x4D] },
+            { name: 'ICO icon', ext: '.ico', magic: [0x00,0x00,0x01,0x00] },
+            { name: 'TIFF image (LE)', ext: '.tif', magic: [0x49,0x49,0x2A,0x00] },
+            { name: 'TIFF image (BE)', ext: '.tif', magic: [0x4D,0x4D,0x00,0x2A] },
+            { name: '7-Zip archive', ext: '.7z', magic: [0x37,0x7A,0xBC,0xAF,0x27,0x1C] },
+            { name: 'RAR archive (v4)', ext: '.rar', magic: [0x52,0x61,0x72,0x21,0x1A,0x07,0x00] },
+            { name: 'RAR archive (v5)', ext: '.rar', magic: [0x52,0x61,0x72,0x21,0x1A,0x07,0x01,0x00] },
+            { name: 'GZIP', ext: '.gz', magic: [0x1F,0x8B] },
+            { name: 'MP3 audio (ID3)', ext: '.mp3', magic: strBytes('ID3') },
+            { name: 'MP3 audio (frame)', ext: '.mp3', test: b => startsWith(b,[0xFF,0xD8,0xFF]) || startsWith(b,[0xFF,0xF3]) || startsWith(b,[0xFF,0xF2]) },
+            { name: 'MP4/QuickTime', ext: '.mp4', test: b => b.length>=12 && eqBytes(b.slice(4,8), strBytes('ftyp')) },
+            { name: 'Matroska video', ext: '.mkv', magic: [0x1A,0x45,0xDF,0xA3] },
+            { name: 'WebM video', ext: '.webm', test: b => eqBytes(b.slice(0,4), [0x1A,0x45,0xDF,0xA3]) && bytesFind(b, strBytes('webm'))>=0 },
+            { name: 'WAV audio', ext: '.wav', test: b => eqBytes(b.slice(0,4), strBytes('RIFF')) && eqBytes(b.slice(8,12), strBytes('WAVE')) },
+            { name: 'AVI video', ext: '.avi', test: b => eqBytes(b.slice(0,4), strBytes('RIFF')) && eqBytes(b.slice(8,12), strBytes('AVI ')) },
+            { name: 'ELF executable', ext: '', magic: [0x7F,0x45,0x4C,0x46] },
+            { name: 'Windows EXE/DLL', ext: '.exe', magic: [0x4D,0x5A] },
+            { name: 'TAR archive (ustar)', ext: '.tar', test: b => {
+                // check for "ustar\0" at offset 257
+                if (b.length < 263) return false;
+                return eqBytes(b.slice(257,263), strBytes('ustar\0'));
+            } },
+        ];
+
+        function strBytes(str){ return Array.from(new TextEncoder().encode(str)); }
+        function startsWith(buf, sig){ return eqBytes(buf.slice(0, sig.length), sig); }
+        function eqBytes(a,b){ if(a.length!==b.length) return false; for(let i=0;i<a.length;i++){ if(a[i]!==b[i]) return false;} return true; }
+        function bytesFind(buf, pattern){
+            outer: for(let i=0;i<=buf.length-pattern.length;i++){
+                for(let j=0;j<pattern.length;j++) if(buf[i+j]!==pattern[j]) continue outer;
+                return i;
+            }
+            return -1;
+        }
+        function humanSize(n){
+            const units=['B','KB','MB','GB','TB']; let i=0; let v=n;
+            while(v>=1024 && i<units.length-1){ v/=1024; i++; }
+            return `${v.toFixed(v<10&&i>0?2:0)} ${units[i]}`;
+        }
+
+        function detect(bytes){
+            for(const rule of SIGNATURES){
+                if(rule.magic){
+                    const off = rule.offset||0;
+                    if(bytes.length>=off+rule.magic.length && eqBytes(bytes.slice(off,off+rule.magic.length), rule.magic)){
+                        return {rule, offset: off, matched: rule.magic.slice(0)};
+                    }
+                } else if(rule.test && rule.test(bytes)){
+                    return {rule, offset: 0, matched: null};
+                }
+            }
+            return null;
+        }
+
+        function renderHex(bytes, match){
+            const cols = 16; let out = '';
+            for(let i=0;i<bytes.length;i+=cols){
+                const addr = i.toString(16).padStart(8,'0');
+                out += `<span class="addr">${addr}</span>  `;
+                for(let j=0;j<cols && i+j<bytes.length;j++){
+                    const idx=i+j, b=bytes[idx];
+                    const inHit = match && match.offset<=idx && idx<match.offset+(match.matched?match.matched.length:0);
+                    const s = b.toString(16).padStart(2,'0').toUpperCase();
+                    out += `<span class="byte ${inHit? 'hit':''}">${s}</span>` + (j===cols-1?'':' ');
+                }
+                out += '\n';
+            }
+            return out;
+        }
+
+        const fileInput = document.getElementById('file');
+        const drop = document.getElementById('drop');
+        const hexEl = document.getElementById('hex');
+        const summaryCard = document.getElementById('summaryCard');
+        const hexCard = document.getElementById('hexCard');
+
+        const $ = id => document.getElementById(id);
+
+        function setResult({ ok, text, badge, mismatch }){
+            const resultLine = $('resultLine');
+            const b = resultLine.querySelector('.badge');
+            b.textContent = badge || (ok? 'DETECTED' : 'UNKNOWN');
+            b.className = 'badge ' + (mismatch? 'warn' : (ok? 'ok' : ''));
+            $('detectedType').textContent = text;
+        }
+
+        async function handleFile(file){
+            if(!file) return;
+            summaryCard.hidden = false; hexCard.hidden = false;
+            $('fileName').textContent = file.name;
+            const ext = (file.name.split('.').pop() || '').toLowerCase();
+            $('fileExt').textContent = ext? ('.'+ext) : '(none)';
+            $('fileSize').textContent = `${file.size} bytes (${humanSize(file.size)})`;
+
+            const slice = file.slice(0, 1024);
+            const buf = await slice.arrayBuffer();
+            const bytes = new Uint8Array(buf);
+
+            const hit = detect(bytes);
+            let confidence = '—';
+            if(hit){
+                confidence = hit.matched? 'Exact header match' : 'Heuristic header match';
+                $('magicOffset').textContent = hit.offset;
+                $('matchedSig').textContent = hit.matched? hit.matched.map(b=>b.toString(16).padStart(2,'0')).join(' ') : '(rule-based)';
+                const detected = `${hit.rule.name} (${hit.rule.ext||'no standard ext'})`;
+                const mismatch = !!(hit.rule.ext && ext && (hit.rule.ext.toLowerCase() !== ('.'+ext)));
+                setResult({ ok:true, text: detected, mismatch, badge: mismatch? 'MISMATCH' : 'DETECTED' });
+                $('confidence').textContent = confidence + (mismatch? ' — extension does not match.' : '');
+            } else {
+                $('magicOffset').textContent = '—';
+                $('matchedSig').textContent = '—';
+                $('confidence').textContent = 'Unknown header';
+                setResult({ ok:false, text: 'Unknown / unsupported signature', badge:'UNKNOWN' });
+            }
+
+            const shown = bytes.slice(0, 256);
+            const matchInfo = hit && hit.matched ? { offset: hit.offset, matched: hit.matched } : null;
+            hexEl.innerHTML = renderHex(shown, matchInfo);
+        }
+
+        ;['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,(e)=>{e.preventDefault(); drop.classList.add('drag');}))
+        ;['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,(e)=>{e.preventDefault(); drop.classList.remove('drag');}))
+        drop.addEventListener('drop', e=>{
+            const f = e.dataTransfer.files && e.dataTransfer.files[0];
+            handleFile(f);
+        });
+        drop.addEventListener('click', ()=> fileInput.click());
+        fileInput.addEventListener('change', ()=> handleFile(fileInput.files[0]));
+
+        drop.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); fileInput.click(); } });
+    </script>
+</body>
+</html>

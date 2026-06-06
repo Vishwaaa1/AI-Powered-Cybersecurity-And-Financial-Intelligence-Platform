@@ -1,0 +1,131 @@
+/* Reset & base */
+.navbar {
+    width: 100%; padding: 1.2rem 3rem; background: rgba(5, 8, 15, 0.8);
+    backdrop-filter: blur(8px); border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+    display: flex; justify-content: space-between; align-items: center;
+    position: fixed; top: 0; left: 0; z-index: 100;
+}
+.logo { color: #00f0ff; font-size: 1.4rem; font-weight: bold; display: flex; align-items: center; gap: 0.5rem; }
+.logo i { font-size: 1.5rem; }
+.nav-links a { margin-left: 2rem; text-decoration: none; color: #ccc; font-size: 1rem; transition: color 0.3s ease; }
+.nav-links a:hover, .nav-links a.active { color: #00f0ff; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Orbitron', sans-serif; background: #05080f; color: #fff;
+    min-height: 100vh; position: relative;
+    padding-top: 80px; /* Space for navbar */
+    overflow-x: hidden;
+}
+
+/* --- Loader Styles --- */
+#loader {
+    position: fixed; width: 100%; height: 100%; background: #05080f;
+    z-index: 9999; display: flex; align-items: center; justify-content: center;
+    opacity: 1; transition: opacity 1s ease-out; top: 0; left: 0;
+}
+.loader-content { text-align: center; position: relative; z-index: 1; }
+.loader-text-container { position: relative; display: inline-block; }
+.loader-text-background {
+    font-family: 'Orbitron', sans-serif; font-size: 5rem; font-weight: 600;
+    color: #4B5563; display: block; position: relative; z-index: 1;
+    user-select: none;
+}
+/* ** CRITICAL STYLES FOR FILL EFFECT ** */
+.loader-text-fill {
+    font-family: 'Orbitron', sans-serif; font-size: 5rem; font-weight: 600;
+    color: #00f0ff; text-shadow: 0 0 15px rgba(0, 240, 255, 0.7);
+    display: block; position: absolute; /* Must be absolute */
+    top: 0; left: 0;
+    width: 0%; /* Start at 0 width */
+    height: 100%;
+    overflow: hidden; /* Clips the text */
+    white-space: nowrap; /* Prevents wrapping */
+    z-index: 2; /* Above background text */
+    transition: width 0.1s linear; /* Smooth fill animation - Adjust timing if needed */
+    user-select: none;
+}
+.loader-percentage {
+    margin-top: 1rem; color: #9CA3AF; font-size: 1rem;
+    font-family: "SFMono-Regular",Consolas,Monaco,Menlo,monospace, var(--sans);
+    letter-spacing: 1px;
+}
+/* --- End Loader --- */
+
+/* Neon glow (Optional) */
+body::before { /* Keep if desired */
+    content: ""; position: absolute; width: 600px; height: 600px;
+    background: radial-gradient(circle, #00f0ff20 0%, transparent 80%);
+    left: 10%; bottom: 10%; z-index: -1;
+}
+
+/* Main Content Area */
+#main-content {
+    opacity: 0; transition: opacity 1s ease 0.5s; position: relative; z-index: 1;
+    text-align: center; padding: 3rem 2rem; width: 100%;
+    min-height: calc(100vh - 80px); display: flex; flex-direction: column;
+    justify-content: center; align-items: center; box-sizing: border-box;
+}
+
+/* Title & Subtitle */
+.title { /* Keep styles */
+    font-size: 4rem; color: #00f0ff; text-shadow: 0 0 20px #00f0ff, 0 0 60px #00f0ff;
+    margin-bottom: 0.3rem; margin-top: 0;
+}
+.subtitle { /* Keep styles */
+    font-size: 1.2rem; color: #b84eff; text-shadow: 0 0 10px #b84eff;
+    margin-bottom: 3rem; letter-spacing: 2px; margin-top: 0.5rem;
+}
+
+/* Animate title letters */
+.animated-title span { /* Keep animation */
+    display: inline-block; opacity: 0; transform: translateY(-30px);
+    animation: popIn 0.6s forwards;
+}
+@keyframes popIn { to { opacity: 1; transform: translateY(0); } }
+
+/* Tools Grid */
+.tools-grid { /* Keep grid styles */
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem;
+    max-width: 1000px; width: 90%; margin: 3rem auto 0 auto;
+}
+
+/* Tool Cards */
+.tool-card { /* Keep card styles */
+    background-color: rgba(0, 255, 255, 0.03); border: 1px solid #00f0ff33;
+    border-radius: 15px; padding: 2rem; text-decoration: none; color: #fff;
+    box-shadow: inset 0 0 10px #00f0ff10; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; transition: 0.4s ease;
+    backdrop-filter: blur(2px); min-height: 150px;
+}
+.tool-card i { /* Keep icon styles */
+    font-size: 2.5rem; color: #00f0ff; margin-bottom: 1rem; transition: 0.3s ease;
+}
+.tool-card span { /* Keep text styles */
+    font-weight: bold; font-size: 1.1rem; text-align: center;
+}
+.tool-card:hover { /* Keep hover styles */
+    background-color: rgba(0, 255, 255, 0.08); box-shadow: 0 0 25px #00f0ff, 0 0 10px #00f0ff;
+    border-color: #00f0ff; transform: scale(1.05);
+}
+.tool-card:hover i { color: #00f0ff; }
+
+/* Responsive */
+@media (max-width: 900px) { /* Keep responsive */
+    .tools-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) { /* Keep responsive */
+    .tools-grid { grid-template-columns: 1fr; }
+    .title { font-size: 3rem; }
+    .navbar { padding: 1rem 1.5rem; }
+    body { padding-top: 60px; }
+    #main-content { min-height: calc(100vh - 60px); }
+    .loader-text-background, .loader-text-fill { font-size: 3rem; }
+}
+@media (max-width: 400px) { /* Keep responsive */
+    .title { font-size: 2.5rem; }
+    .loader-text-background, .loader-text-fill { font-size: 2.5rem; }
+}
+
+#tsparticles { /* Keep particle styles */
+    position: fixed; width: 100%; height: 100%; z-index: 0; top: 0; left: 0;
+}

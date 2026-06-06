@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>CyberNest - Tool Unavailable</title>
+    <link rel="stylesheet" href="/static/navigator_assets/styles.css"> {/* Link to navigator styles */}
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+    <style>
+        /* Additional styles for centering the message */
+        body {
+            display: flex;
+            flex-direction: column; /* Allow header + content */
+            align-items: center;
+            justify-content: center; /* Center content vertically */
+            min-height: 100vh; /* Ensure full height */
+            text-align: center;
+        }
+        .message-container {
+            position: relative; /* Keep above particles */
+            z-index: 1;
+            background-color: rgba(18, 25, 49, 0.7); /* Semi-transparent panel like tool cards */
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 15px;
+            padding: 3rem 4rem;
+            backdrop-filter: blur(5px);
+            max-width: 600px;
+            margin: 2rem;
+        }
+        .message-title {
+            font-size: 2rem;
+            color: var(--accent, #00f0ff); /* Use theme accent */
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+            margin-bottom: 1rem;
+        }
+        .message-text {
+            color: var(--muted, #aab3c7);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--accent, #00f0ff);
+            color: var(--bg, #05080f);
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+        .back-button:hover {
+            background: var(--accent-2, #b84eff);
+            box-shadow: 0 0 25px rgba(184, 78, 255, 0.6);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div id="tsparticles"></div>
+
+    <div class="message-container">
+        <h1 class="message-title">🚧 Under Construction 🚧</h1>
+        <p class="message-text">
+            This tool is currently under development and will be available soon. Stay tuned!
+        </p>
+        <a href="/" class="back-button">Back to Navigator Home</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
+    <script>
+      tsParticles.load("tsparticles", {
+        fullScreen: { enable: true, zIndex: 0 }, // Cover full screen, behind content
+        background: { color: { value: "#05080f" } },
+        particles: {
+             number: { value: 100, density: { enable: true, area: 800 } },
+             color: { value: "#00f0ff" },
+             shape: { type: "circle" },
+             opacity: { value: 0.4 },
+             size: { value: { min: 2, max: 4 } },
+             move: { enable: true, speed: 2, direction: "none", outModes: { default: "bounce" }, random: true, straight: false },
+             links: { enable: true, distance: 120, color: "#00f0ff", opacity: 0.3, width: 1 }
+        },
+        interactivity: {
+             detectsOn: "window",
+             events: { onHover: { enable: true, mode: "grab" }, onClick: { enable: false } }, // Disable push/repulse on this page
+             modes: { grab: { distance: 140, links: { opacity: 0.5 } } }
+        },
+        detectRetina: true
+      });
+    </script>
+</body>
+</html>
